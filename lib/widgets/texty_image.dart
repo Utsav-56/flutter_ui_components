@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 // Reusing the CircularImage and BorderModel (assumed you already have them)
 import 'circular_image.dart'; // your previously created widget
-import './models/border_model.dart';
+import '../models/border_model.dart';
 
 enum LabelAlign {
   topLeft,
