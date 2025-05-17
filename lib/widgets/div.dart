@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:up_ui/models/border_model.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +33,29 @@ class ShadowModel {
   }
 }
 
+class TooltipModel {
+  final Duration startAfter;
+  final Duration duration;
+  final bool showOnHover;
+  final bool showOnLongPress;
+
+  final String message;
+  final Color backgroundColor;
+  final Color textColor;
+  final double fontSize;
+
+  const TooltipModel({
+    required this.message,
+    this.backgroundColor = Colors.black,
+    this.textColor = Colors.white,
+    this.fontSize = 14.0,
+    this.startAfter = const Duration(milliseconds: 500),
+    this.duration = const Duration(seconds: 2),
+    this.showOnHover = false,
+    this.showOnLongPress = true,
+  });
+}
+
 class Div extends StatelessWidget {
   final List<Widget> children;
   final EdgeInsets? padding;
@@ -43,8 +68,15 @@ class Div extends StatelessWidget {
   final DecorationImage? backgroundImage;
   final BorderRadius? borderRadius;
   final ShadowModel? shadow;
-  final VoidCallback? onTap;
   final double scale;
+
+  final bool isClickable;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final VoidCallback? onDoubleTap;
+
+  //tooltips
+  final TooltipModel? tooltip;
 
   // Size constraints
   final double? height; // alias to minHeight
@@ -62,6 +94,7 @@ class Div extends StatelessWidget {
     required this.children,
     this.padding,
     this.border,
+    this.isClickable = false,
     this.scrollable = true,
     this.scrollDirection = Axis.vertical,
     this.contentDirection = Axis.vertical,
@@ -71,6 +104,8 @@ class Div extends StatelessWidget {
     this.borderRadius,
     this.shadow,
     this.onTap,
+    this.onLongPress,
+    this.onDoubleTap,
     this.scale = 1.0,
     this.height,
     this.width,
@@ -79,6 +114,7 @@ class Div extends StatelessWidget {
     this.minWidth,
     this.maxWidth,
     this.overflow = OverflowBehavior.contain, // default
+    this.tooltip,
   });
 
   @override
@@ -162,9 +198,31 @@ class Div extends StatelessWidget {
         break;
     }
 
-    return onTap != null
-        ? GestureDetector(onTap: onTap, child: result)
+    // Wrap the result with GestureDetector if onTap is provided
+    result = (onTap != null && isClickable)
+        ? GestureDetector(
+            onTap: onTap,
+            onLongPress: onLongPress,
+            onDoubleTap: onDoubleTap,
+            child: result)
         : result;
+
+    // Add tooltip if provided
+    if (tooltip != null) {
+      result = Tooltip(
+        message: tooltip!.message,
+        textStyle: TextStyle(
+          color: tooltip!.textColor,
+          fontSize: tooltip!.fontSize,
+        ),
+        waitDuration: tooltip!.startAfter,
+        preferBelow: true,
+        showDuration: tooltip!.duration,
+        child: result,
+      );
+    }
+
+    return result;
   }
 
   Widget _buildContent(List<Widget> children) {
