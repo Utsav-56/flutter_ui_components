@@ -26,8 +26,6 @@ class FlexBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Widget content;
-
     final decoratedContainer = Container(
       padding: padding,
       decoration: BoxDecoration(
