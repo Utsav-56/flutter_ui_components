@@ -86,6 +86,11 @@ class Div extends StatelessWidget {
   //Overflow behavior
   final OverflowBehavior overflow;
 
+// Alignment properties
+  final CrossAxisAlignment alignItems;
+  final MainAxisAlignment justifyContent;
+  final MainAxisSize mainAxisSize;
+
   const Div({
     super.key,
     required this.children,
@@ -112,6 +117,9 @@ class Div extends StatelessWidget {
     this.maxWidth,
     this.overflow = OverflowBehavior.contain, // default
     this.tooltip,
+    this.alignItems = CrossAxisAlignment.start,
+    this.justifyContent = MainAxisAlignment.start,
+    this.mainAxisSize = MainAxisSize.max,
   });
 
   @override
@@ -225,11 +233,15 @@ class Div extends StatelessWidget {
   Widget _buildContent(List<Widget> children) {
     return contentDirection == Axis.vertical
         ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: alignItems,
+            mainAxisAlignment: justifyContent,
+            mainAxisSize: mainAxisSize,
             children: children,
           )
         : Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: alignItems,
+            mainAxisAlignment: justifyContent,
+            mainAxisSize: mainAxisSize,
             children: children,
           );
   }
